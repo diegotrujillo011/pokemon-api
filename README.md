@@ -12,33 +12,30 @@ Projeto do Checkpoint 6 da disciplina **Domain Driven Design using Java** (FIAP)
 
 ## Telas
 
-### Pokédex: lista de pokémons capturados
-
-Cada ficha mostra os dados salvos na API (categoria, altura, peso e data de captura) junto com o número da Pokédex, o sprite, os tipos e o som, buscados na PokeAPI pelo nome.
-
-![Lista de pokémons](imagens/lista.png)
-
-### Novo registro com busca na PokeAPI
-
-O botão **BUSCAR** preenche altura, peso e categoria, mostra a descrição traduzida para o português (com efeito de digitação) e toca o som do pokémon.
-
-![Formulário de cadastro](imagens/formulario.png)
-
-### API publicada no Render
-
-Resposta do `GET /pokemon` direto no navegador:
-
-![Resposta da API publicada](imagens/api.png)
-
-Deploy concluído no Render com Docker:
-
-![Deploy no Render](imagens/deploy.png)
-
-### Testes no Insomnia
-
-Exclusão de um pokémon com `DELETE /pokemon/{codigo}`, respondendo **204 No Content**:
-
-![Teste no Insomnia](imagens/insomnia.png)
+<table>
+  <tr>
+    <td width="55%">
+      <img src="telas/home.png" alt="Tela inicial da Pokédex" width="460">
+    </td>
+    <td>
+      <h3>Tela inicial</h3>
+      <p>Lista todos os pokémons capturados, buscando os dados na API com <code>GET /pokemon</code>.</p>
+      <p>Cada ficha mostra os dados salvos no banco (categoria, altura, peso e data de captura) e, pela PokeAPI, o número da Pokédex, o sprite, os tipos e um botão ♪ que toca o som do pokémon.</p>
+      <p>Os botões <b>EDITAR</b> e <b>SOLTAR</b> fazem o <code>PUT</code> e o <code>DELETE</code>.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="55%">
+      <img src="telas/cadastro.png" alt="Tela de cadastro de pokémon" width="460">
+    </td>
+    <td>
+      <h3>Cadastro</h3>
+      <p>Ao digitar o nome e clicar em <b>BUSCAR</b>, a tela consulta a PokeAPI e preenche altura, peso e categoria automaticamente.</p>
+      <p>A descrição do pokémon aparece traduzida para o português, letra por letra, e o som dele toca.</p>
+      <p>Ao salvar, o site envia um <code>POST /pokemon</code> com os dados em JSON. Se a API recusar (campo vazio ou data no futuro), a tela mostra o erro.</p>
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -65,9 +62,7 @@ URL base: `https://pokemon-api-rm570147.onrender.com`
 | Atualizar | PUT | `/pokemon/{codigo}` | JSON | 201 Created | 400 Bad Request |
 | Excluir | DELETE | `/pokemon/{codigo}` | – | 204 No Content | 404 Not Found |
 
-### Exemplo de corpo (POST e PUT)
-
-A data segue o formato `AAAA-MM-DD`.
+Exemplo de corpo para o POST e o PUT (a data segue o formato `AAAA-MM-DD`):
 
 ```json
 {
@@ -79,20 +74,152 @@ A data segue o formato `AAAA-MM-DD`.
 }
 ```
 
-### Exemplo de resposta (GET /pokemon)
+---
 
-```json
-[
-  {
-    "codigo": 24,
-    "nome": "Pikachu",
-    "altura": 0.4,
-    "peso": 6.0,
-    "categoria": "Rato",
-    "dataDaCaptura": "2006-11-01"
-  }
-]
+## Como executar localmente
+
+### 1. Instale os programas
+
+| Programa | Para quê | Onde baixar |
+| --- | --- | --- |
+| **Java JDK 21** (ou mais novo) | Rodar a API | https://adoptium.net |
+| **Git** | Baixar o projeto | https://git-scm.com |
+| **Node.js** (versão LTS) | Rodar o front-end | https://nodejs.org |
+| **IntelliJ IDEA** (opcional) | Abrir e rodar a API com mais facilidade | https://www.jetbrains.com/idea |
+| **Insomnia** (opcional) | Testar as requisições | https://insomnia.rest |
+
+Você também precisa de um usuário e senha do banco **Oracle da FIAP**.
+
+Para conferir se está tudo instalado, abra um terminal e rode:
+
+```bash
+java -version
+git --version
+node -v
+npm -v
 ```
+
+Cada comando deve mostrar uma versão. Se algum disser que o comando não é reconhecido, reinstale o programa e abra um terminal novo.
+
+### 2. Baixe o projeto
+
+```bash
+git clone https://github.com/diegotrujillo011/pokemon-api.git
+cd pokemon-api
+```
+
+### 3. Configure as variáveis de ambiente
+
+As credenciais do banco **não ficam no código**. A API lê três variáveis de ambiente:
+
+| Variável | Valor |
+| --- | --- |
+| `DB_URL` | `jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL` |
+| `DB_USER` | seu usuário do Oracle (ex.: `RM123456`) |
+| `DB_PASSWORD` | sua senha do Oracle |
+
+Escolha uma das formas abaixo, conforme onde você vai rodar a API.
+
+**No IntelliJ** (recomendado): vá em **Run > Edit Configurations**, selecione `PokemonApplication` e, no campo **Environment variables**, cole a linha abaixo trocando os seus dados (sem espaços depois do `;`):
+
+```
+DB_URL=jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL;DB_USER=SEU_RM;DB_PASSWORD=SUA_SENHA
+```
+
+Se o campo não aparecer, clique em **Modify options** e marque **Environment variables**.
+
+**No PowerShell (Windows):**
+
+```powershell
+$env:DB_URL="jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL"
+$env:DB_USER="SEU_RM"
+$env:DB_PASSWORD="SUA_SENHA"
+```
+
+**No Prompt de Comando (Windows):**
+
+```bat
+set DB_URL=jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL
+set DB_USER=SEU_RM
+set DB_PASSWORD=SUA_SENHA
+```
+
+**No Linux ou macOS:**
+
+```bash
+export DB_URL="jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL"
+export DB_USER="SEU_RM"
+export DB_PASSWORD="SUA_SENHA"
+```
+
+No terminal, as variáveis valem só para aquela janela. Se fechar, precisa definir de novo.
+
+### 4. Rode a API
+
+**Pelo IntelliJ:** abra a pasta `pokemon-api`, espere o Maven baixar as dependências (barra de progresso no canto inferior) e rode a classe `PokemonApplication` pelo botão ▶.
+
+**Pelo terminal**, na pasta `pokemon-api` e com as variáveis definidas:
+
+```bash
+# Windows
+.\mvnw.cmd spring-boot:run
+
+# Linux ou macOS
+./mvnw spring-boot:run
+```
+
+Quando aparecer `Started PokemonApplication` no console, abra no navegador:
+
+```
+http://localhost:8080/pokemon
+```
+
+Deve aparecer a lista de pokémons em JSON.
+
+### 5. Rode o front-end
+
+Com a API rodando, abra **outro** terminal na pasta `front-end`:
+
+```bash
+cd front-end
+npm install
+npm start
+```
+
+O `npm install` baixa as dependências e só precisa ser feito na primeira vez. O `npm start` abre o site em `http://localhost:3000`.
+
+> O front está configurado para usar a **API publicada no Render**. Para ele usar a API local, troque o endereço da constante `API` nos arquivos `src/components/ListaProdutos.jsx` e `src/components/FormProduto.jsx` para `http://localhost:8080/pokemon`.
+
+### 6. Gere o build (opcional)
+
+Para gerar o `.jar` executável da API:
+
+```bash
+# Windows
+.\mvnw.cmd clean -DskipTests package
+
+# Linux ou macOS
+./mvnw clean -DskipTests package
+```
+
+E para executar:
+
+```bash
+java -jar target/pokemon-0.0.1-SNAPSHOT.jar
+```
+
+### Problemas comuns
+
+| Erro | Solução |
+| --- | --- |
+| `The JAVA_HOME environment variable is not defined correctly` | Defina o `JAVA_HOME` apontando para a pasta do JDK. No PowerShell: `$env:JAVA_HOME="C:\caminho\do\jdk"`. Ou rode pelo IntelliJ, que usa o Java dele. |
+| `Variáveis de ambiente do banco não configuradas!` | Alguma das três variáveis está faltando ou com o nome errado. Confira o passo 3 e rode a API de novo. |
+| `invalid username/password` | O usuário ou a senha do Oracle está errado. |
+| `Port 8080 was already in use` | A API já está rodando em outra janela. Pare a anterior antes. |
+| `'node' não é reconhecido` | O Node.js não está instalado ou o terminal foi aberto antes da instalação. Reinstale e abra um terminal novo. |
+| `405 Method Not Allowed` | PUT e DELETE precisam do código no endereço: `/pokemon/{codigo}`. |
+| `400 Bad Request` | Algum campo está vazio ou a data não está no formato `AAAA-MM-DD`. |
+| A lista do site fica carregando | Se estiver usando a API do Render, ela pode estar acordando. Espere até 1 minuto e recarregue. |
 
 ---
 
@@ -121,18 +248,26 @@ flowchart LR
 ### Estrutura do projeto
 
 ```
-src/main/java/br/com/fiap
-├── bo
-│   └── PokemonBO.java
-├── dao
-│   ├── ConnectionFactory.java
-│   └── PokemonDAO.java
-├── resource
-│   ├── CorsFilter.java
-│   └── PokemonResource.java
-├── to
-│   └── PokemonTO.java
-└── PokemonApplication.java
+pokemon-api
+├── src/main/java/br/com/fiap
+│   ├── bo/PokemonBO.java
+│   ├── dao/ConnectionFactory.java
+│   ├── dao/PokemonDAO.java
+│   ├── resource/CorsFilter.java
+│   ├── resource/PokemonResource.java
+│   ├── to/PokemonTO.java
+│   └── PokemonApplication.java
+├── front-end
+│   ├── public/index.html
+│   └── src
+│       ├── App.jsx
+│       ├── pokeapi.js
+│       └── components
+│           ├── ListaProdutos.jsx
+│           └── FormProduto.jsx
+├── telas
+├── Dockerfile
+└── pom.xml
 ```
 
 ---
@@ -145,39 +280,6 @@ src/main/java/br/com/fiap
 - **Front-end:** React, React Router, styled-components
 - **APIs externas no front:** PokeAPI (dados dos pokémons) e MyMemory (tradução para português)
 - **Testes da API:** Insomnia
-
----
-
-## Como rodar localmente
-
-### 1. Variáveis de ambiente
-
-As credenciais do banco não ficam no código. Antes de executar, defina:
-
-| Variável | Exemplo |
-| --- | --- |
-| `DB_URL` | `jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL` |
-| `DB_USER` | seu usuário do Oracle |
-| `DB_PASSWORD` | sua senha do Oracle |
-
-No IntelliJ: **Run > Edit Configurations > Environment variables**.
-
-### 2. Executar
-
-```bash
-./mvnw spring-boot:run
-```
-
-A API sobe em `http://localhost:8080/pokemon`.
-
-### 3. Gerar o build
-
-```bash
-./mvnw clean -DskipTests package
-java -jar target/pokemon-0.0.1-SNAPSHOT.jar
-```
-
-No Windows, use `mvnw.cmd` no lugar de `./mvnw`.
 
 ---
 
